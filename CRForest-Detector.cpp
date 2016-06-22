@@ -439,7 +439,6 @@ void extract_Patches(CRPatch& Train, cv::RNG* pRNG) {
 
 	// load positive file list
 	loadTrainPosFile(vFilenames,  vBBox, vCenter);
-
 	// load postive images and extract patches
 	for(int i=0; i<(int)vFilenames.size(); ++i) {
 		if(i%50==0) cout << i << " " << flush;
@@ -456,10 +455,8 @@ void extract_Patches(CRPatch& Train, cv::RNG* pRNG) {
 		}
 	}
 	cout << endl;
-
 	// load negative file list
 	loadTrainNegFile(vFilenames,  vBBox);
-
 	// load negative images and extract patches
 	for(int i=0; i<(int)vFilenames.size(); ++i) {
 
@@ -510,7 +507,6 @@ void run_detect() {
 void run_train() {
 	// Init forest with number of trees
 	CRForest crForest( ntrees );
-
 	// Init random generator
 	time_t t = time(NULL);
 	uint seed = (uint)t;

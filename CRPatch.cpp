@@ -13,9 +13,7 @@ void CRPatch::extractPatches(const Mat& img, unsigned int n, int label, const cv
 	// extract features
 	vector<cv::Mat> vImg;
 	extractFeatureChannels(img, vImg);
-
-	Mat tmp;
-	int offx = width/2; 
+	int offx = width/2;
 	int offy = height/2;
 
 	// generate x,y locations
@@ -25,12 +23,11 @@ void CRPatch::extractPatches(const Mat& img, unsigned int n, int label, const cv
 //	else
 //		cvRandArr( cvRNG, locations, CV_RAND_UNI, cvScalar(box->x,box->y,0,0), cvScalar(box->x+box->width-width,box->y+box->height-height,0,0) );
 
-	vector<cv::Point> locations;
+	vector<cv::Point> locations((size_t)n);
 	if(!box)
 		cvRNG->fill(locations, CV_RAND_UNI, cv::Scalar(0,0,0,0), cv::Scalar(img.cols-width, img.rows-height, 0, 0));
 	else
 		cvRNG->fill(locations, CV_RAND_UNI, Scalar(box->x, box->y, 0, 0), Scalar(box->x+box->width-width, box->y+box->height-height, 0, 0));
-
 	// reserve memory
 	unsigned int offset = vLPatches[label].size();
 	vLPatches[label].reserve(offset+n);
@@ -39,8 +36,8 @@ void CRPatch::extractPatches(const Mat& img, unsigned int n, int label, const cv
 		PatchFeature pf;
 		vLPatches[label].push_back(pf);
 
-		vLPatches[label].back().roi.x = pt.x;  vLPatches[label].back().roi.y = pt.y;  
-		vLPatches[label].back().roi.width = width;  vLPatches[label].back().roi.height = height; 
+		vLPatches[label].back().roi.x = pt.x;  vLPatches[label].back().roi.y = pt.y;
+		vLPatches[label].back().roi.width = width;  vLPatches[label].back().roi.height = height;
 
 		if(vCenter) {
 			vLPatches[label].back().center.resize(vCenter->size());
@@ -51,12 +48,12 @@ void CRPatch::extractPatches(const Mat& img, unsigned int n, int label, const cv
 		}
 
 		vLPatches[label].back().vPatch.resize(vImg.size());
+
 		for(unsigned int c=0; c<vImg.size(); ++c) {
 //			cvGetSubRect( vImg[c], &tmp,  vLPatches[label].back().roi );
 //			vLPatches[label].back().vPatch[c] = cvCloneMat(&tmp);
 			vImg[c](vLPatches[label].back().roi).copyTo(vLPatches[label].back().vPatch[c]);
 		}
-
 	}
 }
 
@@ -74,12 +71,13 @@ void CRPatch::extractFeatureChannels(const cv::Mat& img, std::vector<cv::Mat>& v
 	cvtColor( img, vImg[0], CV_RGB2GRAY );
 
 	// Temporary images for computing I_x, I_y (Avoid overflow for cvSobel)
-	Mat I_x(img.size(), CV_16SC1);
-	Mat I_y(img.size(), CV_16SC1);
+//	Mat I_x(img.size(), CV_16SC1);
+//	Mat I_y(img.size(), CV_16SC1);
+	Mat I_x, I_y;
 	
 	// |I_x|, |I_y|
-	cv::Sobel(vImg[0],I_x,1,0,3);
-	cv::Sobel(vImg[0],I_y,0,1,3);
+	cv::Sobel(vImg[0],I_x, CV_16S, 1,0);
+	cv::Sobel(vImg[0],I_y, CV_16S, 0,1);
 
 	convertScaleAbs( I_x, vImg[3], 0.25);
 
@@ -107,10 +105,10 @@ void CRPatch::extractFeatureChannels(const cv::Mat& img, std::vector<cv::Mat>& v
 	
 	// |I_xx|, |I_yy|
 
-	cv::Sobel(vImg[0],I_x,2,0,3);
+	cv::Sobel(vImg[0],I_x, CV_16S, 2,0,3);
 	convertScaleAbs( I_x, vImg[5], 0.25);
 	
-	Sobel(vImg[0],I_y,0,2,3);
+	Sobel(vImg[0], I_y, CV_16S, 0,2,3);
 	convertScaleAbs(I_y, vImg[6], 0.25);
 	
 	// L, a, b
