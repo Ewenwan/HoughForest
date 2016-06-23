@@ -113,7 +113,7 @@ void CRPatch::extractFeatureChannels(const cv::Mat& img, std::vector<cv::Mat>& v
 	
 	// L, a, b
 	Mat labImg;
-	cvtColor( img, labImg, CV_RGB2Lab  );
+	cvtColor( img, labImg, CV_RGB2Lab);
 
 	cv::split(labImg, &vImg[0]);
 

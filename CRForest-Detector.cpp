@@ -512,6 +512,7 @@ void run_train() {
 	uint seed = (uint)t;
 
 	cv::RNG cvRNG(seed);
+	//cv::RNG cvRNG(0);
 
 	// Create directory
 	string tpath(treepath);

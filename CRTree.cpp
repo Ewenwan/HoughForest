@@ -281,8 +281,7 @@ bool CRTree::optimizeTest(vector<vector<const PatchFeature*> >& SetA, vector<vec
 				// Generate some random thresholds
 				//int tr = (cvRandInt( cvRNG ) % (d)) + vmin;
 				int tr = (cvRNG->next() % d) + vmin;
-
-				// Split training data into two sets A,B accroding to threshold t 
+				// Split training data into two sets A,B accroding to threshold t
 				split(tmpA, tmpB, TrainSet, valSet, tr);
 
 				// Do not allow empty set split (all patches end up in set A or B)
@@ -323,12 +322,12 @@ void CRTree::evaluateTest(std::vector<std::vector<IntIndex> >& valSet, const int
 			// pointer to channel
 			const Mat& ptC = TrainSet[l][i]->vPatch[test[4]];
 			// get pixel values 
-//			int p1 = (int)*(uchar*)cvPtr2D( ptC, test[1], test[0]);
-//			int p2 = (int)*(uchar*)cvPtr2D( ptC, test[3], test[2]);
+//			int p11 = (int)*(uchar*)cvPtr2D( ptC, test[1], test[0]);
+//			int p22 = (int)*(uchar*)cvPtr2D( ptC, test[3], test[2]);
 
-			int p1 = ptC.at<int>(test[1], test[0]);
-			int p2 = ptC.at<int>(test[3], test[2]);
-		
+			int p1 = (int)ptC.at<uchar>(test[1], test[0]);
+			int p2 = (int)ptC.at<uchar>(test[3], test[2]);
+//
 			valSet[l][i].val = p1 - p2;
 			valSet[l][i].index = i;			
 		}
